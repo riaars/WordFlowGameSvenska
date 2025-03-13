@@ -12,6 +12,13 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      rotate: {
+        "x-180": "180deg",
+        "y-180": "180deg",
+      },
+      perspective: {
+        1000: "1000px", // Add perspective for depth effect
+      },
     },
   },
   plugins: [],
