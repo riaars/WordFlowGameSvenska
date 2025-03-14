@@ -1,6 +1,9 @@
 "use client";
 import { useState } from "react";
 import { validWords } from "./data/swedish_words_million";
+import { LuRefreshCcw } from "react-icons/lu";
+import { FaFireAlt } from "react-icons/fa";
+import { FaRegTrashCan } from "react-icons/fa6";
 
 const getRandomLetters = (num: number) => {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÅÖ";
@@ -10,16 +13,10 @@ const getRandomLetters = (num: number) => {
   );
 };
 
-interface HomeProps {
-  wordSet: string[];
-}
-
 export default function Home() {
-  // const wordSet = await loadWords();
   const [letters, setLetters] = useState(getRandomLetters(12));
   const [word, setWord] = useState<string[]>([]);
   const [score, setScore] = useState(0);
-  const [message, setMessage] = useState("");
   const [submittedWords, setSubmittedWords] = useState<string[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [firstLetter, setFirstLetter] = useState(getRandomLetters(1));
@@ -28,16 +25,14 @@ export default function Home() {
     const lowerWord = (firstLetter + word.join("")).toLowerCase();
     if (validWords.includes(lowerWord)) {
       setScore(score + lowerWord.length);
-      setMessage("✅ Valid Word!");
       setSubmittedWords([...submittedWords, lowerWord.toUpperCase()]);
       setLetters(getRandomLetters(12));
       setFirstLetter(getRandomLetters(1));
-    } else {
-      setMessage("❌ Invalid Word!");
+      showFlyingScore(lowerWord.length.toString());
       handleReset();
+    } else {
+      handleError();
     }
-
-    handleReset();
   };
 
   const handleReset = () => {
@@ -50,21 +45,50 @@ export default function Home() {
     setSelectedIndices([]);
   };
 
+  const handleError = () => {
+    const answer = document.getElementById("answer");
+    answer?.classList.add("wrong-answer");
+
+    setTimeout(() => {
+      answer?.classList.remove("wrong-answer");
+    }, 500);
+  };
+
+  const showFlyingScore = (points: string) => {
+    const container = document.getElementById("score-container");
+    const scoreElement = document.createElement("div");
+    scoreElement.classList.add("flying-score");
+    scoreElement.textContent = parseInt(points) > 0 ? `+${points}` : points;
+
+    scoreElement.style.left = `${Math.random() * 80 + 10}%`;
+
+    container?.appendChild(scoreElement);
+
+    setTimeout(() => {
+      scoreElement.remove();
+    }, 1000);
+  };
+
   return (
     <div className="text-center flex flex-row justify-center h-screen">
-      <div className="flex flex-col items-center justify-center p-4 w-96 bg-gray-100">
-        <div className="fixed top-0 mt-4">
-          <h1 className="text-2xl font-bold">Svenska WordFlow Game</h1>
-          <p className="text-xl my-4">Score: {score}</p>
+      <div className="flex flex-col items-center p-4 w-96 bg-white ">
+        <div className="top-0">
+          <h1 className="text-2xl font-bold">Svenska WordFlow!</h1>
+          <div className="flex flex-row gap-1 justify-center items-center text-lg mb-5 mt-5">
+            <FaFireAlt />
+            {score}
+          </div>
         </div>
-        <div className="flex flex-col gap-2 overflow-y-auto">
+        <div
+          id="score-container"
+          className="flex flex-col gap-2 overflow-y-auto"
+        >
           {submittedWords.map((word, index) => (
-            <div className="flex flex-row gap-2 p-2 text-lg font-bold bg-scroll">
+            <div className="flex flex-row gap-1 p-0 text-lg font-bold bg-scroll">
               {word.split("").map((char: string) => (
                 <div
                   key={index}
-                  className="p-4 border rounded bg-gray-200 center"
-                  style={{ maxWidth: "60px" }}
+                  className="p-2 border rounded bg-gray-200 center"
                 >
                   {char}
                 </div>
@@ -73,57 +97,55 @@ export default function Home() {
           ))}
         </div>
 
-        <div
-          className="grid grid-cols-8 gap-2 text-lg font-bold mt-5"
-          style={{ maxWidth: "400px" }}
-        >
+        <div className="flex flex-col items-center bottom-0 absolute bg-white z-10 ">
           <div
-            className="p-2 border rounded bg-gray-200 center"
-            style={{ maxWidth: "60px" }}
+            id="answer"
+            className={`grid grid-cols-8 gap-2 text-lg font-bold mt-5 mb-5`}
           >
-            {firstLetter}
+            <div className="p-2 border rounded center bg-blue-500 text-white">
+              {firstLetter}
+            </div>
+
+            {word.map((char: string, index) => (
+              <div
+                key={index}
+                className="p-2 border rounded bg-blue-500 text-white center"
+              >
+                {char}
+              </div>
+            ))}
+            <div className="p-2 border-2 border-dashed border-blue-600  rounded center text-white">
+              {""}
+            </div>
           </div>
 
-          {word.map((char: string, index) => (
-            <div
-              key={index}
-              className="p-2 border rounded bg-gray-200 center"
-              style={{ maxWidth: "60px" }}
-            >
-              {char}
-            </div>
-          ))}
-        </div>
-        <p className="mt-2">{message}</p>
-
-        <div className="flex flex-row gap -1">
-          {word.length > 0 && (
-            <button
-              onClick={handleReset}
-              className="ml-2 p-2  text-blue-500 mt-2 mb-2 border solid rounded"
-            >
-              Clear
-            </button>
-          )}
-        </div>
-
-        <div className="flex flex-col justify-baseline absolute bottom-0">
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row self-stretch justify-between">
             <button
               onClick={handleRefresh}
-              className="ml-2 p-2  text-blue-500 mt-2 mb-2 border solid rounded"
+              className="ml-2 p-2 text-blue-500 mt-2 mb-2 border solid rounded"
             >
-              Refresh
+              <LuRefreshCcw />
             </button>
 
-            <button
-              onClick={handleSubmit}
-              className="ml-2 p-2 bg-blue-500 text-white mt-2 mb-2 border rounded"
-            >
-              Submit
-            </button>
+            <div className="flex flex-row self-end">
+              {word.length > 0 && (
+                <button
+                  onClick={handleReset}
+                  className="ml-2 p-2 text-blue-500 mt-2 mb-2 border solid rounded"
+                >
+                  <FaRegTrashCan />
+                </button>
+              )}
+              <button
+                onClick={handleSubmit}
+                className="ml-2 p-2 bg-green-500 text-white mt-2 mb-2 border rounded"
+              >
+                Submit
+              </button>
+            </div>
           </div>
-          <div className="grid grid-cols-6 gap-2 text-lg font-bold center mb-2 pt-5">
+
+          <div className="grid grid-cols-6 gap-2 text-lg font-bold center mb-2 pt-5 ">
             {letters.map((char: string, index) => (
               <div
                 key={index}
