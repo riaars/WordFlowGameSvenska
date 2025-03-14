@@ -1,33 +1,59 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { validWords } from "./data/swedish_words_million";
 import { LuRefreshCcw } from "react-icons/lu";
 import { FaFireAlt } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 
-const getRandomLetters = (num: number) => {
+const getRandomLetters = (
+  validWords: string[],
+  numLetters: number = 12
+): any => {
+  const randomWord =
+    validWords[Math.floor(Math.random() * validWords.length)].toUpperCase();
+  const wordLetters = randomWord.toUpperCase().split("");
+
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÅÖ";
-  return Array.from(
-    { length: num },
-    () => alphabet[Math.floor(Math.random() * alphabet.length)]
-  );
+
+  while (wordLetters.length < numLetters) {
+    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+    wordLetters.push(randomLetter);
+  }
+  return {
+    wordLetters: wordLetters.sort(() => Math.random() - 0.5),
+    randomWord: randomWord,
+    firstLetter: randomWord[0],
+  };
 };
 
 export default function Home() {
-  const [letters, setLetters] = useState(getRandomLetters(12));
+  const [letters, setLetters] = useState<string[]>([]);
+  const [firstLetter, setFirstLetter] = useState<string>("");
+  const [randomWord, setRandomWord] = useState<string>("");
+
   const [word, setWord] = useState<string[]>([]);
   const [score, setScore] = useState(0);
   const [submittedWords, setSubmittedWords] = useState<string[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-  const [firstLetter, setFirstLetter] = useState(getRandomLetters(1));
+
+  const generateRandomLetters = () => {
+    const { wordLetters, randomWord, firstLetter } =
+      getRandomLetters(validWords);
+    setLetters(wordLetters);
+    setRandomWord(randomWord);
+    setFirstLetter(firstLetter);
+  };
+
+  useEffect(() => {
+    generateRandomLetters();
+  }, []);
 
   const handleSubmit = () => {
     const lowerWord = (firstLetter + word.join("")).toLowerCase();
     if (validWords.includes(lowerWord)) {
       setScore(score + lowerWord.length);
       setSubmittedWords([...submittedWords, lowerWord.toUpperCase()]);
-      setLetters(getRandomLetters(12));
-      setFirstLetter(getRandomLetters(1));
+      generateRandomLetters();
       showFlyingScore(lowerWord.length.toString());
       handleReset();
     } else {
@@ -41,8 +67,9 @@ export default function Home() {
   };
 
   const handleRefresh = () => {
-    setLetters(getRandomLetters(12));
+    setWord([]);
     setSelectedIndices([]);
+    generateRandomLetters();
   };
 
   const handleError = () => {
@@ -79,6 +106,7 @@ export default function Home() {
             {score}
           </div>
         </div>
+        {/* {getRandomLetters(validWords).randomWord} */}
         <div
           id="score-container"
           className="flex flex-col gap-2 overflow-y-auto"
@@ -109,7 +137,7 @@ export default function Home() {
             {word.map((char: string, index) => (
               <div
                 key={index}
-                className="p-2 border rounded bg-blue-500 text-white center"
+                className="p-2 border rounded bg-blue-300 text-white center"
               >
                 {char}
               </div>
@@ -146,12 +174,12 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-6 gap-2 text-lg font-bold center mb-2 pt-5 ">
-            {letters.map((char: string, index) => (
+            {letters.map((char: string, index: number) => (
               <div
                 key={index}
                 className={`p-4 border rounded cursor-pointer ${
                   selectedIndices.includes(index)
-                    ? "bg-blue-500 text-white"
+                    ? "bg-gray-500 text-white"
                     : "bg-gray-200"
                 }`}
                 onClick={() => {
