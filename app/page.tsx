@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { validWords } from "./data/swedish_words_million";
+import { validWords } from "./data/swedish_words";
 import { LuRefreshCcw } from "react-icons/lu";
 import { FaFireAlt } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -39,11 +39,11 @@ export default function Home() {
   const generateRandomLetters = () => {
     const { wordLetters, randomWord, firstLetter } =
       getRandomLetters(validWords);
+
     setLetters(wordLetters);
     setRandomWord(randomWord);
     setFirstLetter(firstLetter);
   };
-
   useEffect(() => {
     generateRandomLetters();
   }, []);
@@ -106,7 +106,6 @@ export default function Home() {
             {score}
           </div>
         </div>
-        {/* {getRandomLetters(validWords).randomWord} */}
         <div
           id="score-container"
           className="flex flex-col gap-2 overflow-y-auto"
