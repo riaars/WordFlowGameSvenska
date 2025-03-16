@@ -35,6 +35,7 @@ export default function Home() {
   const [score, setScore] = useState(0);
   const [submittedWords, setSubmittedWords] = useState<string[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [timeLeft, setTimeLeft] = useState(30);
 
   const generateRandomLetters = () => {
     const { wordLetters, randomWord, firstLetter } =
@@ -96,6 +97,23 @@ export default function Home() {
     }, 1000);
   };
 
+  const handleTimeLeft = () => {
+    let interval;
+    if (!interval) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    }
+
+    setTimeout(() => {
+      clearInterval(interval);
+    }, 30000);
+  };
+
+  useEffect(() => {
+    handleTimeLeft();
+  }, []);
+
   return (
     <div className="text-center flex flex-row justify-center h-screen">
       <div className="flex flex-col items-center p-4 w-96 bg-white ">
@@ -105,6 +123,7 @@ export default function Home() {
             <FaFireAlt />
             {score}
           </div>
+          <div>Timeleft: {timeLeft}s</div>
         </div>
         <div
           id="score-container"
