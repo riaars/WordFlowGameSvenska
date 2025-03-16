@@ -4,6 +4,7 @@ import { validWords } from "./data/swedish_words";
 import { LuRefreshCcw } from "react-icons/lu";
 import { FaFireAlt } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
+import { IoTimeOutline } from "react-icons/io5";
 
 const getRandomLetters = (
   validWords: string[],
@@ -119,11 +120,16 @@ export default function Home() {
       <div className="flex flex-col items-center p-4 w-96 bg-white ">
         <div className="top-0">
           <h1 className="text-2xl font-bold">Svenska WordFlow!</h1>
-          <div className="flex flex-row gap-1 justify-center items-center text-lg mb-5 mt-5">
-            <FaFireAlt />
-            {score}
+          <div className="flex flex-row justify-between">
+            <div className="flex flex-row gap-1 justify-center items-center text-lg mb-5 mt-5">
+              <FaFireAlt />
+              {score}
+            </div>
+            <div className="flex flex-row gap-1 justify-center items-center text-lg mb-5 mt-5">
+              <IoTimeOutline />
+              {timeLeft} s
+            </div>
           </div>
-          <div>Timeleft: {timeLeft}s</div>
         </div>
         <div
           id="score-container"
