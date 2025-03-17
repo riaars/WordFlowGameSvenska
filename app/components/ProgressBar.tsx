@@ -5,7 +5,6 @@ interface ProgressBarProps {
 }
 
 function ProgressBar({ percentage }: ProgressBarProps) {
-  console.log(percentage);
   const handleProgressBarLength = () => {
     const element = document.getElementById("progress-bar");
     if (element) {

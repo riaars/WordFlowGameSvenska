@@ -38,11 +38,15 @@ export default function Home() {
   const [submittedWords, setSubmittedWords] = useState<string[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [timeLeft, setTimeLeft] = useState(30);
+  const [timeoutDuration, setTimeoutDuration] = useState(30000);
+
+  let interval: any;
+  let timeoutId: any;
 
   const generateRandomLetters = () => {
     const { wordLetters, randomWord, firstLetter } =
       getRandomLetters(validWords);
-
+    console.log(randomWord);
     setLetters(wordLetters);
     setRandomWord(randomWord);
     setFirstLetter(firstLetter);
@@ -52,10 +56,18 @@ export default function Home() {
   }, []);
 
   const handleSubmit = () => {
-    const lowerWord = (firstLetter + word.join("")).toLowerCase();
-    if (validWords.includes(lowerWord)) {
-      setScore(score + lowerWord.length);
+    const lowerWord = firstLetter + word.join("");
+    const regex = new RegExp(`^${lowerWord}$`, "i");
+    if (validWords.some((word) => regex.test(word))) {
+      const newScore = score + lowerWord.length * 10;
+      setScore(newScore);
+      if (timeLeft > 0) {
+        setTimeLeft((prev) => prev + lowerWord.length);
+        setTimeoutDuration(timeoutDuration + newScore * 100);
+      }
+
       setSubmittedWords([...submittedWords, lowerWord.toUpperCase()]);
+
       generateRandomLetters();
       showFlyingScore(lowerWord.length.toString());
       handleReset();
@@ -100,30 +112,44 @@ export default function Home() {
   };
 
   const handleTimeLeft = () => {
-    let interval;
     if (!interval) {
       interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            return 0;
+          } else {
+            return prev - 1;
+          }
+        });
       }, 1000);
     }
-
-    setTimeout(() => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
       clearInterval(interval);
-    }, 30000);
+    }, timeoutDuration);
   };
 
   useEffect(() => {
     handleTimeLeft();
   }, []);
 
+  useEffect(() => {
+    handleTimeLeft();
+    return () => {
+      if (interval) clearInterval(interval);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [timeoutDuration]);
+
   let percentage = (timeLeft / 30) * 100;
 
   return (
     <div className="text-center flex flex-row justify-center h-screen">
       <div className="flex flex-col items-center p-4 w-96 bg-white ">
-        <div className="top-0">
+        <div className="top-0 mb-5">
           <h1 className="text-2xl font-bold">Svenska WordFlow!</h1>
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row justify-between ">
             <div className="flex flex-row gap-1 justify-center items-center text-lg mb-5 mt-5">
               <FaFireAlt />
               {score}
@@ -140,8 +166,11 @@ export default function Home() {
           className="flex flex-col gap-2 overflow-y-auto"
         >
           {submittedWords.map((word, index) => (
-            <div className="flex flex-row gap-1 p-0 text-lg font-bold bg-scroll">
-              {word.split("").map((char: string) => (
+            <div
+              key={index}
+              className="flex flex-row gap-1 p-0 text-lg font-bold bg-scroll"
+            >
+              {word.split("").map((char: string, index: number) => (
                 <div
                   key={index}
                   className="p-2 border rounded bg-gray-200 center"
