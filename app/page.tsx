@@ -5,6 +5,7 @@ import { LuRefreshCcw } from "react-icons/lu";
 import { FaFireAlt } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
+import ProgressBar from "./components/ProgressBar";
 
 const getRandomLetters = (
   validWords: string[],
@@ -115,6 +116,8 @@ export default function Home() {
     handleTimeLeft();
   }, []);
 
+  let percentage = (timeLeft / 30) * 100;
+
   return (
     <div className="text-center flex flex-row justify-center h-screen">
       <div className="flex flex-col items-center p-4 w-96 bg-white ">
@@ -130,6 +133,7 @@ export default function Home() {
               {timeLeft} s
             </div>
           </div>
+          <ProgressBar percentage={percentage} />
         </div>
         <div
           id="score-container"
