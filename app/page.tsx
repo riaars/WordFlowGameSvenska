@@ -39,6 +39,8 @@ export default function Home() {
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [timeLeft, setTimeLeft] = useState(30);
   const [timeoutDuration, setTimeoutDuration] = useState(30000);
+  const [adjustmentScore, setAdjustmentScore] = useState(0);
+  const [isNewScore, setIsNewScore] = useState(false);
 
   let interval: any;
   let timeoutId: any;
@@ -58,7 +60,9 @@ export default function Home() {
   const handleSubmit = () => {
     const lowerWord = firstLetter + word.join("");
     const regex = new RegExp(`^${lowerWord}$`, "i");
+    setIsNewScore(true);
     if (validWords.some((word) => regex.test(word))) {
+      setAdjustmentScore(lowerWord.length * 10);
       const newScore = score + lowerWord.length * 10;
       setScore(newScore);
       if (timeLeft > 0) {
@@ -67,7 +71,6 @@ export default function Home() {
       }
 
       setSubmittedWords([...submittedWords, lowerWord.toUpperCase()]);
-
       generateRandomLetters();
       showFlyingScore(lowerWord.length.toString());
       handleReset();
@@ -101,9 +104,7 @@ export default function Home() {
     const scoreElement = document.createElement("div");
     scoreElement.classList.add("flying-score");
     scoreElement.textContent = parseInt(points) > 0 ? `+${points}` : points;
-
     scoreElement.style.left = `${Math.random() * 80 + 10}%`;
-
     container?.appendChild(scoreElement);
 
     setTimeout(() => {
@@ -139,6 +140,7 @@ export default function Home() {
     return () => {
       if (interval) clearInterval(interval);
       if (timeoutId) clearTimeout(timeoutId);
+      setIsNewScore(false);
     };
   }, [timeoutDuration]);
 
@@ -150,16 +152,24 @@ export default function Home() {
         <div className="top-0 mb-5">
           <h1 className="text-2xl font-bold">Svenska WordFlow!</h1>
           <div className="flex flex-row justify-between ">
-            <div className="flex flex-row gap-1 justify-center items-center text-lg mb-5 mt-5">
+            <div className="flex flex-row gap-1 justify-center items-center text-md mb-5 mt-5">
               <FaFireAlt />
               {score}
             </div>
-            <div className="flex flex-row gap-1 justify-center items-center text-lg mb-5 mt-5">
+            <div
+              className={`${
+                timeLeft <= 5 ? "text-red-500" : "inherit"
+              } flex flex-row gap-1 justify-center items-center text-md mb-5 mt-5`}
+            >
               <IoTimeOutline />
-              {timeLeft} s
+              <span>{timeLeft}s</span>
             </div>
           </div>
-          <ProgressBar percentage={percentage} />
+          <ProgressBar
+            percentage={percentage}
+            bonus={adjustmentScore}
+            isNewScore={isNewScore}
+          />
         </div>
         <div
           id="score-container"
