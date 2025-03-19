@@ -38,8 +38,8 @@ export default function Home() {
   const [score, setScore] = useState(0);
   const [submittedWords, setSubmittedWords] = useState<string[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-  const [timeLeft, setTimeLeft] = useState(10);
-  const [timeoutDuration, setTimeoutDuration] = useState(30000);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeoutDuration, setTimeoutDuration] = useState(60000);
   const [adjustmentScore, setAdjustmentScore] = useState(0);
   const [isNewScore, setIsNewScore] = useState(false);
   const [finishGameDialog, setFinishGameDialog] = useState(false);
@@ -104,8 +104,8 @@ export default function Home() {
   const restartGame = () => {
     handleRefresh();
     setScore(0);
-    setTimeLeft(30);
-    setTimeoutDuration(30000);
+    setTimeLeft(60);
+    setTimeoutDuration(60000);
     setAdjustmentScore(0);
     setIsNewScore(false);
     setFinishGameDialog(false);
@@ -163,7 +163,7 @@ export default function Home() {
     }
   }, [timeLeft]);
 
-  let percentage = (timeLeft / 30) * 100;
+  let percentage = (timeLeft / 60) * 100;
 
   return (
     <div className="text-center flex flex-row justify-center h-screen">
@@ -190,25 +190,24 @@ export default function Home() {
             isNewScore={isNewScore}
           />
         </div>
-        <div
-          id="score-container"
-          className="flex flex-col gap-2 overflow-y-auto"
-        >
-          {submittedWords.map((word, index) => (
-            <div
-              key={index}
-              className="flex flex-row gap-1 p-0 text-lg font-bold bg-scroll"
-            >
-              {word.split("").map((char: string, index: number) => (
-                <div
-                  key={index}
-                  className="p-2 border rounded bg-gray-200 center"
-                >
-                  {char}
-                </div>
-              ))}
-            </div>
-          ))}
+        <div className="h-48 overflow-y-auto scrollbar-hide">
+          <div id="score-container" className="flex flex-col gap-2">
+            {submittedWords.map((word, index) => (
+              <div
+                key={index}
+                className="flex flex-row gap-1 p-0 text-lg font-bold"
+              >
+                {word.split("").map((char: string, index: number) => (
+                  <div
+                    key={index}
+                    className="p-2 border rounded bg-gray-200 center"
+                  >
+                    {char}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col items-center bottom-0 absolute bg-white z-1 ">

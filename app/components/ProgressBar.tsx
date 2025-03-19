@@ -29,9 +29,7 @@ function ProgressBar({ percentage, bonus, isNewScore }: ProgressBarProps) {
     handleProgressBarLength();
   }, [percentage]);
 
-  return (
-    <div id="progress-bar" className={`progress-bar rounded border `}></div>
-  );
+  return <div id="progress-bar" className={`progress-bar rounded `}></div>;
 }
 
 export default ProgressBar;
