@@ -1,0 +1,14 @@
+.dialog-overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog {
+  z-index: 100;
+  max-height: 300px;
+  animation: fadeIn 0.3s ease-in-out;
+}

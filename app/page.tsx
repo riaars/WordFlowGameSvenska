@@ -6,6 +6,7 @@ import { FaFireAlt } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import ProgressBar from "./components/ProgressBar";
+import Dialog from "./components/Dialog";
 
 const getRandomLetters = (
   validWords: string[],
@@ -37,10 +38,11 @@ export default function Home() {
   const [score, setScore] = useState(0);
   const [submittedWords, setSubmittedWords] = useState<string[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(10);
   const [timeoutDuration, setTimeoutDuration] = useState(30000);
   const [adjustmentScore, setAdjustmentScore] = useState(0);
   const [isNewScore, setIsNewScore] = useState(false);
+  const [finishGameDialog, setFinishGameDialog] = useState(false);
 
   let interval: any;
   let timeoutId: any;
@@ -99,6 +101,17 @@ export default function Home() {
     }, 500);
   };
 
+  const restartGame = () => {
+    handleRefresh();
+    setScore(0);
+    setTimeLeft(30);
+    setTimeoutDuration(30000);
+    setAdjustmentScore(0);
+    setIsNewScore(false);
+    setFinishGameDialog(false);
+    handleTimeLeft();
+  };
+
   const showFlyingScore = (points: string) => {
     const container = document.getElementById("score-container");
     const scoreElement = document.createElement("div");
@@ -143,6 +156,12 @@ export default function Home() {
       setIsNewScore(false);
     };
   }, [timeoutDuration]);
+
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setFinishGameDialog(!finishGameDialog);
+    }
+  }, [timeLeft]);
 
   let percentage = (timeLeft / 30) * 100;
 
@@ -192,7 +211,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="flex flex-col items-center bottom-0 absolute bg-white z-10 ">
+        <div className="flex flex-col items-center bottom-0 absolute bg-white z-1 ">
           <div
             id="answer"
             className={`grid grid-cols-8 gap-2 text-lg font-bold mt-5 mb-5`}
@@ -267,6 +286,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+      {finishGameDialog && (
+        <Dialog
+          title="Game Over"
+          content={`Your score is ${score}`}
+          toggleDialog={() => setFinishGameDialog(!finishGameDialog)}
+          restart={() => restartGame()}
+        />
+      )}
     </div>
   );
 }
