@@ -36,6 +36,9 @@ export default function Home() {
 
   const [word, setWord] = useState<string[]>([]);
   const [score, setScore] = useState(0);
+  const [pointType, setPointType] = useState<
+    "normal" | "positive" | "negative"
+  >("normal");
   const [submittedWords, setSubmittedWords] = useState<string[]>([]);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [timeLeft, setTimeLeft] = useState(60);
@@ -67,6 +70,7 @@ export default function Home() {
       setAdjustmentScore(lowerWord.length * 10);
       const newScore = score + lowerWord.length * 10;
       setScore(newScore);
+      setPointType("positive");
       if (timeLeft > 0) {
         setTimeLeft((prev) => prev + lowerWord.length);
         setTimeoutDuration(timeoutDuration + newScore * 100);
@@ -90,6 +94,7 @@ export default function Home() {
     setWord([]);
     setSelectedIndices([]);
     generateRandomLetters();
+    setPointType("negative");
   };
 
   const handleError = () => {
@@ -153,9 +158,15 @@ export default function Home() {
     return () => {
       if (interval) clearInterval(interval);
       if (timeoutId) clearTimeout(timeoutId);
-      setIsNewScore(false);
     };
   }, [timeoutDuration]);
+
+  // reset point type
+  useEffect(() => {
+    setTimeout(() => {
+      setPointType("normal");
+    }, 5000);
+  }, [timeoutDuration, handleRefresh, handleSubmit]);
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -184,11 +195,7 @@ export default function Home() {
               <span>{timeLeft}s</span>
             </div>
           </div>
-          <ProgressBar
-            percentage={percentage}
-            bonus={adjustmentScore}
-            isNewScore={isNewScore}
-          />
+          <ProgressBar percentage={percentage} pointType={pointType} />
         </div>
         <div className="h-48 overflow-y-auto scrollbar-hide">
           <div id="score-container" className="flex flex-col gap-2">

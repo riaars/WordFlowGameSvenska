@@ -2,11 +2,10 @@ import React, { useEffect } from "react";
 
 interface ProgressBarProps {
   percentage: number;
-  bonus: number;
-  isNewScore: boolean;
+  pointType: "normal" | "positive" | "negative";
 }
 
-function ProgressBar({ percentage, bonus, isNewScore }: ProgressBarProps) {
+function ProgressBar({ percentage, pointType }: ProgressBarProps) {
   const handleProgressBarLength = () => {
     const element = document.getElementById("progress-bar");
     if (element) {
@@ -14,16 +13,28 @@ function ProgressBar({ percentage, bonus, isNewScore }: ProgressBarProps) {
     }
   };
 
+  const handleProgressBarState = () => {
+    switch (pointType) {
+      case "normal": {
+        return "blue";
+      }
+      case "positive": {
+        return "green";
+      }
+      case "negative": {
+        return "red";
+      }
+      default:
+        return "blue";
+    }
+  };
+
   useEffect(() => {
     const element = document.getElementById("progress-bar");
     if (element) {
-      if (isNewScore) {
-        element.style.background = bonus > 0 ? "green" : "red";
-      } else {
-        element.style.backgroundColor = "blue";
-      }
+      element.style.backgroundColor = handleProgressBarState();
     }
-  }, [bonus, percentage]);
+  }, [pointType, percentage]);
 
   useEffect(() => {
     handleProgressBarLength();
