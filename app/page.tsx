@@ -44,7 +44,6 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [timeoutDuration, setTimeoutDuration] = useState(60000);
   const [adjustmentScore, setAdjustmentScore] = useState(0);
-  const [isNewScore, setIsNewScore] = useState(false);
   const [finishGameDialog, setFinishGameDialog] = useState(false);
 
   let interval: any;
@@ -65,9 +64,7 @@ export default function Home() {
   const handleSubmit = () => {
     const lowerWord = firstLetter + word.join("");
     const regex = new RegExp(`^${lowerWord}$`, "i");
-    setIsNewScore(true);
     if (validWords.some((word) => regex.test(word))) {
-      setAdjustmentScore(lowerWord.length * 10);
       const newScore = score + lowerWord.length * 10;
       setScore(newScore);
       setPointType("positive");
@@ -111,8 +108,6 @@ export default function Home() {
     setScore(0);
     setTimeLeft(60);
     setTimeoutDuration(60000);
-    setAdjustmentScore(0);
-    setIsNewScore(false);
     setFinishGameDialog(false);
     handleTimeLeft();
   };
