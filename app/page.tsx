@@ -1,12 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
-import { validWords } from "./data/swedish_words";
+import { validWords } from "../data/swedish_words";
 import { LuRefreshCcw } from "react-icons/lu";
 import { FaFireAlt } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
-import ProgressBar from "./components/ProgressBar";
-import Dialog from "./components/Dialog";
+import ProgressBar from "../components/ProgressBar";
+import Dialog from "../components/Dialog";
 
 const getRandomLetters = (
   validWords: string[],
@@ -110,6 +110,8 @@ export default function Home() {
     setTimeoutDuration(60000);
     setFinishGameDialog(false);
     handleTimeLeft();
+    setPointType("normal");
+    setSubmittedWords([]);
   };
 
   const showFlyingScore = (points: string) => {
