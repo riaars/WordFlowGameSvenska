@@ -1,21 +1,20 @@
-import fs from "fs";
+export const getRandomLetters = (
+  validWords: string[],
+  numLetters: number = 12
+): any => {
+  const randomWord =
+    validWords[Math.floor(Math.random() * validWords.length)].toUpperCase();
+  const wordLetters = randomWord.toUpperCase().split("");
 
-let wordSet = new Set();
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÅÖ";
 
-// Function to load words from the file
-function loadWords() {
-  const words = fs
-    .readFileSync("./data/swedish_words_million.txt", "utf8")
-    .split("\n");
-  wordSet = new Set(words.map((w) => w.trim()));
-}
-
-export async function getServerSideProps() {
-  if (wordSet.size === 0) loadWords(); // Load words only if not already loaded
-
+  while (wordLetters.length < numLetters) {
+    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+    wordLetters.push(randomLetter);
+  }
   return {
-    props: {
-      wordSet: Array.from(wordSet), // Passing as an array
-    },
+    wordLetters: wordLetters.sort(() => Math.random() - 0.5),
+    randomWord: randomWord,
+    firstLetter: randomWord[0],
   };
-}
+};

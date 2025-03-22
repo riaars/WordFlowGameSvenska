@@ -7,27 +7,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { IoTimeOutline } from "react-icons/io5";
 import ProgressBar from "../components/ProgressBar";
 import Dialog from "../components/Dialog";
-
-const getRandomLetters = (
-  validWords: string[],
-  numLetters: number = 12
-): any => {
-  const randomWord =
-    validWords[Math.floor(Math.random() * validWords.length)].toUpperCase();
-  const wordLetters = randomWord.toUpperCase().split("");
-
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÅÖ";
-
-  while (wordLetters.length < numLetters) {
-    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
-    wordLetters.push(randomLetter);
-  }
-  return {
-    wordLetters: wordLetters.sort(() => Math.random() - 0.5),
-    randomWord: randomWord,
-    firstLetter: randomWord[0],
-  };
-};
+import { getRandomLetters } from "@/utils/helpers";
 
 export default function Home() {
   const [letters, setLetters] = useState<string[]>([]);
@@ -43,7 +23,6 @@ export default function Home() {
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [timeLeft, setTimeLeft] = useState(60);
   const [timeoutDuration, setTimeoutDuration] = useState(60000);
-  const [adjustmentScore, setAdjustmentScore] = useState(0);
   const [finishGameDialog, setFinishGameDialog] = useState(false);
 
   let interval: any;
@@ -104,7 +83,9 @@ export default function Home() {
   };
 
   const restartGame = () => {
-    handleRefresh();
+    setWord([]);
+    setSelectedIndices([]);
+    generateRandomLetters();
     setScore(0);
     setTimeLeft(60);
     setTimeoutDuration(60000);
