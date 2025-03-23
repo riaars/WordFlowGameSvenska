@@ -8,6 +8,7 @@ import { IoTimeOutline } from "react-icons/io5";
 import ProgressBar from "../components/ProgressBar";
 import Dialog from "../components/Dialog";
 import { getRandomLetters } from "@/utils/helpers";
+import DialogInstruction from "@/components/DialogInstruction";
 
 export default function Home() {
   const [letters, setLetters] = useState<string[]>([]);
@@ -24,6 +25,8 @@ export default function Home() {
   const [timeLeft, setTimeLeft] = useState(60);
   const [timeoutDuration, setTimeoutDuration] = useState(60000);
   const [finishGameDialog, setFinishGameDialog] = useState(false);
+
+  const [openInstructionDialog, setOpenInstructionDialog] = useState(true);
 
   let interval: any;
   let timeoutId: any;
@@ -128,15 +131,18 @@ export default function Home() {
   };
 
   useEffect(() => {
-    handleTimeLeft();
+    // handleTimeLeft();
+    setOpenInstructionDialog(true);
   }, []);
 
   useEffect(() => {
-    handleTimeLeft();
-    return () => {
-      if (interval) clearInterval(interval);
-      if (timeoutId) clearTimeout(timeoutId);
-    };
+    if (!openInstructionDialog) {
+      handleTimeLeft();
+      return () => {
+        if (interval) clearInterval(interval);
+        if (timeoutId) clearTimeout(timeoutId);
+      };
+    }
   }, [timeoutDuration]);
 
   // reset point type
@@ -276,6 +282,16 @@ export default function Home() {
           content={`Your score is ${score}`}
           toggleDialog={() => setFinishGameDialog(!finishGameDialog)}
           restart={() => restartGame()}
+        />
+      )}
+
+      {openInstructionDialog && (
+        <DialogInstruction
+          title="Instruction how to play"
+          toggleDialog={() => {
+            restartGame();
+            setOpenInstructionDialog(!openInstructionDialog);
+          }}
         />
       )}
     </div>
