@@ -161,7 +161,7 @@ export default function Home() {
   let percentage = (timeLeft / 60) * 100;
 
   return (
-    <div className="text-center flex flex-row justify-center h-screen">
+    <div className="flex flex-row justify-center h-screen">
       <div className="flex flex-col items-center p-4 w-96 bg-white ">
         <div className="top-0 mb-5">
           <h1 className="text-2xl font-bold">Svenska WordFlow!</h1>
