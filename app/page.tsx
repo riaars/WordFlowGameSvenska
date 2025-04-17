@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { validWords } from "../data/swedish_words";
 import { LuRefreshCcw } from "react-icons/lu";
 import { FaFireAlt } from "react-icons/fa";
@@ -13,7 +13,7 @@ import DialogInstruction from "@/components/DialogInstruction";
 export default function Home() {
   const [letters, setLetters] = useState<string[]>([]);
   const [firstLetter, setFirstLetter] = useState<string>("");
-  const [randomWord, setRandomWord] = useState<string>("");
+  const [, setRandomWord] = useState<string>("");
 
   const [word, setWord] = useState<string[]>([]);
   const [score, setScore] = useState(0);
@@ -34,7 +34,6 @@ export default function Home() {
   const generateRandomLetters = () => {
     const { wordLetters, randomWord, firstLetter } =
       getRandomLetters(validWords);
-    console.log(randomWord);
     setLetters(wordLetters);
     setRandomWord(randomWord);
     setFirstLetter(firstLetter);
@@ -163,7 +162,7 @@ export default function Home() {
     }
   }, [timeLeft]);
 
-  let percentage = (timeLeft / 60) * 100;
+  const percentage = (timeLeft / 60) * 100;
 
   return (
     <div className="flex flex-row justify-center h-screen">
