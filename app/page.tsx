@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { validWords } from "../data/swedish_words";
 import { LuRefreshCcw } from "react-icons/lu";
 import { FaFireAlt } from "react-icons/fa";
@@ -28,8 +28,8 @@ export default function Home() {
 
   const [openInstructionDialog, setOpenInstructionDialog] = useState(true);
 
-  let interval: any;
-  let timeoutId: any;
+  let interval: ReturnType<typeof setInterval>;
+  let timeoutId: ReturnType<typeof setTimeout>;
 
   const generateRandomLetters = () => {
     const { wordLetters, randomWord, firstLetter } =
