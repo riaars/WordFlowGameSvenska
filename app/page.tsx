@@ -50,6 +50,11 @@ export default function Home() {
       const newScore = score + lowerWord.length * 10;
       setScore(newScore);
       setPointType("positive");
+
+      setTimeout(() => {
+        setPointType("normal");
+      }, 5000);
+
       if (timeLeft > 0) {
         setTimeLeft((prev) => prev + lowerWord.length);
         setTimeoutDuration(timeoutDuration + newScore * 100);
@@ -150,7 +155,7 @@ export default function Home() {
     setTimeout(() => {
       setPointType("normal");
     }, 5000);
-  }, [timeoutDuration, handleRefresh, handleSubmit]);
+  }, [timeoutDuration, handleRefresh]);
 
   useEffect(() => {
     if (timeLeft === 0) {
